@@ -17,7 +17,7 @@ local on_attach = function(client, bufnr)
 	vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
 	vim.keymap.set('n', 'gI', vim.lsp.buf.implementation, opts)
 	vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-	vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+	vim.keymap.set('n', '<leader>cr', vim.lsp.buf.rename, opts)
 	vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
 	vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
 	vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
@@ -56,7 +56,7 @@ require("lazy").setup({
 		dependencies = {
 			"neovim/nvim-lspconfig",
 			"williamboman/mason-lspconfig.nvim",
-			"jose-elias-alvarez/null-ls.nvim", -- Add this dependency
+			"nvimtools/none-ls.nvim", -- Add this dependency
 		},
 		config = function()
 			require("mason").setup()
@@ -71,13 +71,11 @@ require("lazy").setup({
 				sources = {
 					-- Go import
 					null_ls.builtins.formatting.goimports,
-					-- Rust import and formatting
-					null_ls.builtins.formatting.rustfmt,
+					null_ls.builtins.diagnostics.golangci_lint,
+					-- gitsigns
+					null_ls.builtins.code_actions.gitsigns,
 					-- Python imports
 					null_ls.builtins.formatting.isort,
-					-- JavaScript/TypeScript imports
-					null_ls.builtins.formatting.eslint_d,
-					null_ls.builtins.code_actions.eslint_d,
 				},
 			})
 
@@ -159,8 +157,11 @@ require("lazy").setup({
 
 	-- Add a dedicated formatter plugin for more control
 	{
-		"jose-elias-alvarez/null-ls.nvim",
-		dependencies = { "nvim-lua/plenary.nvim" },
+		"nvimtools/none-ls.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvimtools/none-ls-extras.nvim",
+		},
 	},
 
 	-- Add conform.nvim for enhanced formatting control
@@ -182,10 +183,6 @@ require("lazy").setup({
 			formatters_by_ft = {
 				lua = { "stylua" },
 				python = { "isort", "black" },
-				javascript = { { "prettierd", "prettier" } },
-				typescript = { { "prettierd", "prettier" } },
-				javascriptreact = { { "prettierd", "prettier" } },
-				typescriptreact = { { "prettierd", "prettier" } },
 				go = { "goimports", "gofmt" },
 				rust = { "rustfmt" },
 			},
